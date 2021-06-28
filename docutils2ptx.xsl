@@ -4,7 +4,7 @@
     Transform docutuls xml to pretext
 -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
-
+<xsl:output method="xml" omit-xml-declaratino="no" indent="yes"/>
 
 <xsl:template match="/">
     <xsl:apply-templates />
@@ -19,9 +19,7 @@
 <xsl:template match="document">
     <pretext>
         <docinfo/>
-        <book>
-            <xsl:apply-templates select="node()|@*" />
-        </book>
+        <xsl:apply-templates select="node()" />
     </pretext>
 </xsl:template>
 
@@ -30,15 +28,18 @@
         <xsl:variable name="depth" select="count(ancestor::section)"/>
         <xsl:choose>        
             <xsl:when test="$depth = 0">
-                <xsl:text>chapter</xsl:text>
+                <xsl:text>book</xsl:text>
             </xsl:when>
             <xsl:when test="$depth = 1">
-                <xsl:text>section</xsl:text>
+                <xsl:text>chapter</xsl:text>
             </xsl:when>
             <xsl:when test="$depth = 2">
-                <xsl:text>subsection</xsl:text>
+                <xsl:text>section</xsl:text>
             </xsl:when>
             <xsl:when test="$depth = 3">
+                <xsl:text>subsection</xsl:text>
+            </xsl:when>
+            <xsl:when test="$depth = 4">
                 <xsl:text>subsubsection</xsl:text>
             </xsl:when>
             <xsl:otherwise>
@@ -58,6 +59,11 @@
     </xsl:attribute>
 </xsl:template>
 
+<!-- <xsl:template match="@enumtype">
+    <xsl:attribute name="label">
+        <xsl:value-of select="."/>
+    </xsl:attribute>
+</xsl:template> -->
 
 
 <xsl:template match="paragraph">
@@ -67,15 +73,73 @@
 </xsl:template>
 
 <xsl:template match="bullet_list">
-    <ul>
-        <xsl:apply-templates select="node()" />
-    </ul>
+    <p>
+        <ul>
+            <xsl:apply-templates select="node()" />
+        </ul>
+    </p>
+</xsl:template>
+
+<xsl:template match="enumerated_list">
+    <p>
+        <ol>
+            <xsl:attribute name="label">
+                <xsl:variable name="kind" select="@enumtype"/>
+                    <xsl:choose>        
+                        <xsl:when test="$kind = 'arabic'">
+                            <xsl:text>1</xsl:text>
+                        </xsl:when>
+                        <xsl:when test="$kind = 'loweralpha'">
+                            <xsl:text>a</xsl:text>
+                        </xsl:when>
+                        <xsl:when test="$kind = 'upperalpha'">
+                            <xsl:text>A</xsl:text>
+                        </xsl:when>
+                        <xsl:when test="$kind = 'lowerroman'">
+                            <xsl:text>i</xsl:text>
+                        </xsl:when>
+                        <xsl:when test="$kind = 'upperroman'">
+                            <xsl:text>I</xsl:text>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:text>A</xsl:text>
+                        </xsl:otherwise>
+                    </xsl:choose>
+            </xsl:attribute>
+            <xsl:apply-templates select="node()" />
+        </ol>
+    </p>
 </xsl:template>
 
 <xsl:template match="list_item">
     <li>
         <xsl:apply-templates select="node()|@*" />
     </li>
+</xsl:template>
+
+<xsl:template match="literal_block[@language='default']">
+    <pre>
+        <xsl:apply-templates select="node()" />
+    </pre>
+</xsl:template>
+
+<xsl:template match="literal_block">
+    <program>
+        <xsl:attribute name="language">
+            <xsl:value-of select="@language"/>
+        </xsl:attribute>
+        <input>
+            <xsl:text>&#xa;</xsl:text>
+            <xsl:apply-templates select="node()"/>
+            <xsl:text>&#xa;</xsl:text>
+        </input>
+    </program>
+</xsl:template>
+
+<xsl:template match="comment">
+    <xsl:comment>
+        <xsl:value-of select="." />
+    </xsl:comment>
 </xsl:template>
 
 <!-- ignore the inline element that contains the content (link title) -->
@@ -104,6 +168,11 @@
 <xsl:template match="target">
     <xsl:message>Ignored Target</xsl:message>
     <xsl:text>[TARGET]</xsl:text>
+</xsl:template>
+
+<xsl:template match="compound">
+    <xsl:message>Ignoring Compound for now</xsl:message>
+    <xsl:text>[COMPOUND]</xsl:text>
 </xsl:template>
 
 
