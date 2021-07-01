@@ -4,3 +4,7 @@
 __pycache__
 _build
 output
+.DS_Store
+.vscode
+build
+_build

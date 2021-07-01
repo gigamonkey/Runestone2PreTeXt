@@ -23,6 +23,7 @@
     </pretext>
 </xsl:template>
 
+
 <xsl:template match="section">
     <xsl:variable name="division">
         <xsl:variable name="depth" select="count(ancestor::section)"/>
@@ -64,6 +65,21 @@
         <xsl:value-of select="."/>
     </xsl:attribute>
 </xsl:template> -->
+
+
+<xsl:template match="image">
+    <image>
+        <xsl:attribute name="source">
+            <xsl:value-of select="concat('images/', @uri)"/>
+        </xsl:attribute>
+        <xsl:if test="@width">
+            <xsl:attribute name="width">
+                <xsl:value-of select="concat(@width, '%')"/>
+            </xsl:attribute>
+        </xsl:if>
+        <xsl:copy-of select="@alt|@height"/>
+    </image>
+</xsl:template>
 
 
 <xsl:template match="paragraph">
@@ -116,6 +132,48 @@
         <xsl:apply-templates select="node()|@*" />
     </li>
 </xsl:template>
+
+<xsl:template match="table">
+    <tabular>
+        <xsl:apply-templates select="node()|@ids" />
+    </tabular>
+</xsl:template>
+
+<xsl:template match="tgroup">
+    <xsl:apply-templates select="node()|@ids" />
+</xsl:template>
+
+<!-- Delete colspecs-->
+<xsl:template match="colspec" />
+
+<xsl:template match="thead|tbody">
+    <xsl:apply-templates select="node()|@ids" />
+</xsl:template>
+
+<xsl:template match="thead/row">
+    <row header="yes">
+        <xsl:apply-templates select="node()|@ids" />
+    </row>
+</xsl:template>
+
+<xsl:template match="tbody/row">
+    <row>
+        <xsl:apply-templates select="node()|@ids" />
+    </row>
+</xsl:template>
+
+<xsl:template match="entry">
+    <cell>
+        <xsl:apply-templates select="node()|@ids" />
+    </cell>
+</xsl:template>
+
+<xsl:template match="entry/paragraph">
+        <xsl:apply-templates select="node()" />
+</xsl:template>
+
+
+
 
 <xsl:template match="literal_block[@language='default']">
     <pre>
