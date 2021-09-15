@@ -1,5 +1,19 @@
 # Runestone 2 PreTeXt
 
+This is an experiment to convert Runestone's rst to PreTeXt.  My original idea was to use sphinx to generate xml and then simply use xsltproc to convert that xml to PreTeXt. That turns out to be difficult for a few reasons.
+
+1. The XML output processor for sphinx seems to ignore custom directives.  
+2. Each rst file is treated as a standalone XML file not as a unit so we end up missing out on all kinds of things like a master toc and section numbering etc.
+
+I think with perseverence this was could work.  But there may be other ways that are better.
+
+1. Write xsltproc rules to convert the html
+2. Write a custom output format for sphinx that produces the PreTeXt directly
+3. Oscar Levin has written a PreTeXt output format for Pandoc. Perhaps that could be used, although the rst input processing would need to be augmented to understand the runestone directives.
+4. A more hacking approach might be to use what I have now, and then output the Runestone components in PreTeXt in a second phase and then merge them.
+5. Probably some other thing I'm not thinking of...
+
+
 Two commands:
 
 To convert rst files to xml run
