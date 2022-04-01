@@ -10,6 +10,12 @@ Welcome to outputtest's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   Chapter1/activecode.rst
+   Chapter1/parsons.rst
+   Chapter2/mchoice.rst
+   Chapter2/shortanswer.rst
+   NotDone/visualizers.rst
+   
 Section One
 -----------
 
@@ -30,7 +36,16 @@ Let us visit `Brad"s Blog <https://reputablejournal.com>`_
 
    print("hello world")
 
-   
+
+YouTube
+-------
+
+.. youtube:: X1-UNHUajfk
+    :divid: theforloop
+    :height: 315
+    :width: 560
+    :align: left
+
 
 Indices and tables
 ==================
