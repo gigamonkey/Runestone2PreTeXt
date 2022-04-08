@@ -10,6 +10,8 @@ xsl_filename = "/Users/bmiller/Runestone/Runestone2Pretext/docutils2ptx.xsl"
 
 
 def transform_one_page(root, xml_filename):
+    if "toctree" in str(xml_filename):
+        return
     try:
         dom = ET.parse(xml_filename)
     except Exception as e:
@@ -20,7 +22,7 @@ def transform_one_page(root, xml_filename):
     xslt = ET.parse(xsl_filename)
     transform = ET.XSLT(xslt)
     try:
-        newdom = transform(dom)
+        newdom = transform(dom)  # can add an unparsed dictionary of stringparams
     except Exception as e:
         print(f"Failed to transform {xml_filename}")
         print(e)
