@@ -6,7 +6,8 @@
     The main index.rst file can easily be done by hand.
     There is a separate script to transform each of the chapter based toctree.rst files.
 -->
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:str="http://exslt.org/strings" extension-element-prefixes="str" version="1.0">
     <xsl:output method="xml" omit-xml-declaratino="no" indent="yes"/>
 
     <xsl:template match="/">
@@ -64,7 +65,8 @@
     <xsl:template match="image">
         <image>
             <xsl:attribute name="source">
-                <xsl:value-of select="concat('images/', @uri)"/>
+                <xsl:value-of select="@uri"/>
+                <!-- concat('images/', @uri) -->
             </xsl:attribute>
             <xsl:if test="@width">
                 <xsl:attribute name="width">
@@ -80,6 +82,18 @@
         <p>
             <xsl:apply-templates select="node()|@*" />
         </p>
+    </xsl:template>
+
+    <xsl:template match="emphasis">
+        <em>
+            <xsl:apply-templates select="node()|@*" />
+        </em>
+    </xsl:template>
+
+    <xsl:template match="strong">
+        <alert>
+            <xsl:apply-templates select="node()|@*" />
+        </alert>
     </xsl:template>
 
     <xsl:template match="literal">
@@ -134,9 +148,12 @@
     </xsl:template>
 
     <xsl:template match="table">
-        <tabular>
-            <xsl:apply-templates select="node()|@ids" />
-        </tabular>
+        <table>
+            <xsl:apply-templates select="@ids" />
+            <tabular>
+                <xsl:apply-templates select="node()" />
+            </tabular>
+        </table>
     </xsl:template>
 
     <xsl:template match="tgroup">
@@ -181,6 +198,7 @@
         </pre>
     </xsl:template>
 
+
     <xsl:template match="literal_block">
         <program>
             <xsl:attribute name="language">
@@ -204,7 +222,7 @@
     <xsl:template match="reference[@internal='True']">
         <xref>
             <xsl:attribute name='ref'>
-                <xsl:value-of select="@refuri"/>
+                <xsl:value-of select="@refid|@refuri"/>
             </xsl:attribute>
         </xref>
     </xsl:template>
@@ -283,6 +301,55 @@
     </xsl:template>
 
     <xsl:template match="target">
+    </xsl:template>
+
+<!-- PreTeXt does not have tabbed grouping like Runestone, but they have better ways to break up questions
+-->
+    <xsl:template match="TabbedStuffNode">
+        <exercise>
+        <xsl:apply-templates select="TabNode"/>
+        </exercise>
+    </xsl:template>
+
+    <xsl:template match='TabNode[@tabname="Question"]'>
+            <statement>
+                <xsl:apply-templates select="exercise/statement/node()"/>
+                <xsl:apply-templates select="exercise/node()[not(self::statement)]"/>
+            </statement>
+    </xsl:template>
+
+    <!-- <xsl:template match='TabNode[@tabname="Answer"]/listing'>
+        <solution>
+            <xsl:apply-templates select="node()" mode="solution"/>
+        </solution>
+    </xsl:template> -->
+
+    <xsl:template match='TabNode[@tabname="Answer"]'>
+        <solution>
+            <xsl:apply-templates select="listing/node()" mode="solution" />
+            <xsl:apply-templates select="node()[not(self::listing)]"/>
+        </solution>
+    </xsl:template>
+
+    <xsl:template match='listing' mode="solution">
+        <xsl:apply-templates select="node()" mode="solution"/>  
+    </xsl:template>
+
+    <xsl:template match='program' mode="solution">
+        <program>
+            <xsl:apply-templates select="@interactive" mode="solution"/>              
+            <xsl:apply-templates select="node()|@xml:id|@language"/>  
+        </program>
+    </xsl:template>
+
+    <xsl:template match='@interactive' mode="solution">
+    </xsl:template>
+
+    <xsl:template match='TabNode[@tabname="Discussion"]'>
+    </xsl:template>
+
+    <xsl:template match="QuestionNode">
+            <xsl:apply-templates select="node()"/>
     </xsl:template>
 
 </xsl:stylesheet>
