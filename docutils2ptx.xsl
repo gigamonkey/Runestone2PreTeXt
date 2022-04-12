@@ -59,7 +59,8 @@
 
     <xsl:template match="@ids">
         <xsl:attribute name="xml:id">
-            <xsl:if test="$filename = 'Exercises.xml'">
+            <xsl:value-of select="concat($folder, '_', .)" />
+            <!-- <xsl:if test="$filename = 'Exercises.xml'">
                 <xsl:value-of select="concat($folder, '-', .)" />
             </xsl:if>
             <xsl:if test="$filename = 'Glossary.xml'">
@@ -67,7 +68,8 @@
             </xsl:if>
             <xsl:if test="$filename != 'Exercises.xml' and $filename != 'Glossary.xml'">
                 <xsl:value-of select="." />
-            </xsl:if>
+            </xsl:if> -->
+
         </xsl:attribute>
     </xsl:template>
 
