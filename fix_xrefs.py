@@ -10,7 +10,7 @@ def camel_to_snake(name):
 
 for root, dirs, files in os.walk("pretext"):
     folder = root.split("/")[-1]
-    folder = camel_to_snake(folder).replace("-", "_")
+    folder = camel_to_snake(folder)
     for file in files:
         if "toctree" in file:
             continue
@@ -30,7 +30,7 @@ for root, dirs, files in os.walk("pretext"):
                     parts = x.split("/")
                     for part in parts:
                         newps.append(camel_to_snake(part))
-                    newps[0] = newps[0].replace("-", "_")
+                    newps[0] = newps[0]
                     new_xref = "_".join(newps)
                     print(new_xref)
                 elif "fig-" in x or "lst-" in x:
@@ -39,5 +39,12 @@ for root, dirs, files in os.walk("pretext"):
                     new_xref = f"{folder}_{camel_to_snake(x)}"
                     print(new_xref)
                 text = text.replace(save_x, new_xref)
+            text = text.replace('xml:id=""', "")
+            text = text.replace("&#8220;", "<q>")
+            text = text.replace("&#8221;", "</q>")
+            text = text.replace("&#8217;", "'")
+            text = text.replace('width="150%"', 'width="75%"')
+            text = text.replace('width="560"', 'width="auto"')
+
             with open(os.path.join(root, file), "w") as f:
                 f.write(text)
