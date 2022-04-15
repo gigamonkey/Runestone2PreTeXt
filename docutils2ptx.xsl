@@ -6,7 +6,8 @@
     The main index.rst file can easily be done by hand.
     There is a separate script to transform each of the chapter based toctree.rst files.
 -->
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:str="http://exslt.org/strings" extension-element-prefixes="str" version="1.0">
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:str="http://exslt.org/strings" extension-element-prefixes="str" version="1.0" encoding="utf8">
     <xsl:output method="xml" omit-xml-declaration="no" indent="yes" />
 
     <!-- use a string param for the filename  if filename is Exercises then top level should be exercises not section
@@ -57,6 +58,27 @@
         </xsl:element>
     </xsl:template>
 
+    <xsl:template match="figure">
+        <figure>
+            <xsl:attribute name="align">
+                <xsl:value-of select="@align" />
+            </xsl:attribute>
+            <xsl:attribute name="xml:id">
+                <xsl:value-of select="@ids" />
+            </xsl:attribute>
+            <xsl:copy-of select="caption" />
+            <!-- <image>
+                <xsl:attribute name="source">
+                    <xsl:value-of select="image/@uri" />
+                </xsl:attribute>
+            </image> -->
+            <xsl:apply-templates select="image" />
+
+            <!-- <xsl:copy-of select="*[not(self::image) and not(self::caption)]" /> -->
+            <xsl:apply-templates select="*[not(self::image) and not(self::caption)]" />
+        </figure>
+    </xsl:template>
+
     <xsl:template match="@ids">
         <xsl:attribute name="xml:id">
             <xsl:value-of select="concat($folder, '_', .)" />
@@ -78,7 +100,11 @@
         <xsl:value-of select="."/>
     </xsl:attribute>
 </xsl:template> -->
-
+    <xsl:template match="admonition">
+        <note>
+            <xsl:apply-templates select="node()|@ids" />
+        </note>
+    </xsl:template>
 
     <xsl:template match="image">
         <image>
@@ -114,9 +140,9 @@
     </xsl:template>
 
     <xsl:template match="strong">
-        <alert>
+        <term>
             <xsl:apply-templates select="node()|@*" />
-        </alert>
+        </term>
     </xsl:template>
 
     <xsl:template match="literal">
@@ -233,6 +259,12 @@
         </program>
     </xsl:template>
 
+    <xsl:template match="block_quote">
+        <blockquote>
+            <xsl:apply-templates select="node()" />
+        </blockquote>
+    </xsl:template>
+
     <xsl:template match="comment">
         <xsl:comment>
             <xsl:value-of select="." />
@@ -338,8 +370,27 @@
     <xsl:template match='TabNode[@tabname="Question"]'>
         <statement>
             <xsl:apply-templates select="exercise/statement/node()" />
-            <xsl:apply-templates select="exercise/node()[not(self::statement)]" />
+            <!-- <xsl:apply-templates select="exercise/node()[not(self::statement)]" /> -->
+            <!-- <xsl:apply-templates select="paragraph/node()[not(self::statement)]" mode="nonex" /> -->
         </statement>
+        <program>
+            <xsl:attribute name="interactive">
+                <xsl:value-of select="*/program/@interactive" />
+            </xsl:attribute>
+            <xsl:attribute name="language">
+                <xsl:value-of select="*/program/@language" />
+            </xsl:attribute>
+            <xsl:attribute name="xml:id">
+                <xsl:value-of select="*/program/@xml:id" />
+            </xsl:attribute>
+            <xsl:apply-templates select="exercise/program/node()" />
+        </program>
+    </xsl:template>
+
+    <xsl:template match="paragraph" mode="nonex">
+        <p>
+            <xsl:apply-templates select="node()" />
+        </p>
     </xsl:template>
 
     <!-- <xsl:template match='TabNode[@tabname="Answer"]/listing'>
@@ -350,8 +401,8 @@
 
     <xsl:template match='TabNode[@tabname="Answer"]'>
         <solution>
-            <xsl:apply-templates select="listing/node()" mode="solution" />
-            <xsl:apply-templates select="node()[not(self::listing)]" />
+            <xsl:apply-templates select="node()" mode="solution" />
+            <xsl:apply-templates select="node()[not(self::program)]" />
         </solution>
     </xsl:template>
 
@@ -373,5 +424,18 @@
     <xsl:template match="QuestionNode">
         <xsl:apply-templates select="node()" />
     </xsl:template>
+
+    <xsl:template match='TabNode[@tabname="Tip"]'>
+        <hint>
+            <xsl:apply-templates select="node()" />
+        </hint>
+    </xsl:template>
+
+    <xsl:template match='RevealNode'>
+        <hint>
+            <xsl:apply-templates select="node()" />
+        </hint>
+    </xsl:template>
+
 
 </xsl:stylesheet>
