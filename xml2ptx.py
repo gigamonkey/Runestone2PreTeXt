@@ -6,8 +6,10 @@ import os
 import re
 from pathlib import Path
 import pdb
+import sys
 
 xsl_filename = "/Users/bmiller/Runestone/Runestone2Pretext/docutils2ptx.xsl"
+basedir = sys.argv[1]
 
 
 def to_snake(name):
@@ -47,13 +49,18 @@ def transform_one_page(root, xml_filename, fileonly):
         return
     newroot = root.replace("build/xml", "")
     ptx_filename = str(xml_filename).replace(".xml", ".ptx").replace("build/xml", "")
-    with open(
-        f"/Users/bmiller/Runestone/books/thinkcspy/pretext/{ptx_filename}", "w"
-    ) as ptfile:
+    # maybe need to make folder
+    if ptx_filename.startswith("/"):
+        ptx_filename = ptx_filename[1:]
+    fpath = Path(basedir) / "pretext" / Path(ptx_filename)
+    if "/" in ptx_filename:
+        fpath.parent.mkdir(parents=True, exist_ok=True)
+
+    with open(fpath, "w") as ptfile:
         ptfile.write(ET.tostring(newdom, pretty_print=True).decode("utf8"))
 
 
-os.chdir("/Users/bmiller/Runestone/books/thinkcspy")
+os.chdir(f"{basedir}")
 
 # Recursively walk the tree
 for root, dirs, files in os.walk("build/xml"):

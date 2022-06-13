@@ -77,8 +77,10 @@ def convert_one_toctree(root, path):
 # %%
 import os
 from pathlib import Path
+import sys
 
-os.chdir("/Users/bmiller/Runestone/books/thinkcspy")
+# sys.argv[1] should be path to the top level of the book
+os.chdir(sys.argv[1])
 
 # Recursively walk the tree
 for root, dirs, files in os.walk("."):

@@ -1,39 +1,37 @@
 # Runestone 2 PreTeXt
 
-This is an experiment to convert Runestone's rst to PreTeXt.  My original idea was to use sphinx to generate xml and then simply use xsltproc to convert that xml to PreTeXt. That turns out to be difficult for a few reasons.
+## Converting RST to PreTeXt
 
-1. The XML output processor for sphinx seems to ignore custom directives.  
-2. Each rst file is treated as a standalone XML file not as a unit so we end up missing out on all kinds of things like a master toc and section numbering etc.
+Lets just acknowledge that this is a somewhat cumbersom multi-step process, but do keep in mind that it is not meant to be done everyday. Ideally this is done once for each book, so it should not be so bad.
 
-I think with perseverence this was could work.  But there may be other ways that are better.
+### RST + Runestone to Generic XML
 
-1. Write xsltproc rules to convert the html
-2. Write a custom output format for sphinx that produces the PreTeXt directly
-3. Oscar Levin has written a PreTeXt output format for Pandoc. Perhaps that could be used, although the rst input processing would need to be augmented to understand the runestone directives.
-4. A more hacking approach might be to use what I have now, and then output the Runestone components in PreTeXt in a second phase and then merge them.
-5. Probably some other thing I'm not thinking of...
+First hack the pavement.py file. Make a copy of the `template_args` dictionary and past it outside the Options bunch.
 
+Simply run `runestone rst2xml` this will put xml files in `build/xml`. It will also create a file called `rs-substitutes.xml` this contains the html for **some** of the components that have not been converted. The remaining pieces of the `rs-substitutes.xml` file
+can be populated from the database by running the `updateSubs.py` script in the book folder.
 
-Two commands:
+### Generic XML to PreTeXt
 
-To convert rst files to xml run
+Edit your index.rst file and change the toctree directives to use xml includes. Then convert the toctree.rst files with the script `toctree2xml.py`
 
-sphinx-build -b xml -d ././build/overview/doctrees -c . -Acourse_id=overview -Alogin_required=false -Aappname=runestone -Aloglevel=10 -Acourse_url=https://runestone.academy -Adynamic_pages=True -Ause_services=true -Abasecourse=overview -Apython3=true -Adownloads_enabled=true -Aallow_pairs=false -Aenable_chatcodes=false -Arunestone_version=5.7.1 -Abuild_info=unknown . ./build/xml
+To convert xml output by a sphinx build you have two options
 
-To convert xml output by a sphinx build:
+1. run `xsltproc /path/to/docutils2ptx.xsl /path/to/build/xml/foo.xml > foo.ptx` for every sub chapter.
 
-`xsltproc docutils2ptx.xsl book/_build/xml/foo.xml  > foo.ptx`
+2. run `python xml2ptx.py` which will walk the directories in in the build/xml folder. This will read the xml source from the build/xml folder and write pretext source to the pretext folder.
 
-to build the pretext
+### Build the PreTeXt book
 
-`pretext build -i foo.ptx -o output [html|latex]`
 `pretext build html -i index.ptx -p publication.xml --param runestone.dev:yes`
+
+Or using Robs dev script
+python ~/src/pretext/pretext/pretext -c all -f html -p publication-rs-for-all.xml -d ../beta thinkcspy.ptx
+
+To build for academy use the publication-rs-for-academy.xml file See https://pretextbook.org/doc/guide/html/publication-file-online.html
 
 Its good to check latex as it is pickier than html
 
+TODO:
 
-# TODO
-1. Find a way to combine -- may need to just reconstruct the toc by hand and use xsltproc to strip off the beginning of each document.
-
-2. `return [nodes.raw(self.block_text, res, format="html")]` When we are building xml try this method instead of the visitor method for the xml nodes.
-But how do we know what we are building??
+-   Need a better way to get images into the build directory for PreTeXt

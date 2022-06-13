@@ -38,6 +38,9 @@
                 <xsl:when test="$depth = 0 and $filename = 'Exercises.xml'">
                     <xsl:text>exercises</xsl:text>
                 </xsl:when>
+                <!-- <xsl:when test="$depth = 0 and $filename = 'Glossary.xml'">
+                    <xsl:text>glossary</xsl:text>
+                </xsl:when> -->
                 <xsl:when test="$depth = 0">
                     <xsl:text>section</xsl:text>
                 </xsl:when>
@@ -79,6 +82,7 @@
         </figure>
     </xsl:template>
 
+
     <xsl:template match="@ids">
         <xsl:attribute name="xml:id">
             <xsl:value-of select="concat($folder, '_', .)" />
@@ -101,6 +105,34 @@
     </xsl:attribute>
 </xsl:template> -->
     <xsl:template match="admonition">
+        <note>
+            <xsl:apply-templates select="node()|@ids" />
+        </note>
+    </xsl:template>
+
+    <xsl:template match="img">
+        <image>
+            <xsl:attribute name="source">
+                <xsl:value-of select="@src"/>
+            </xsl:attribute>
+            <xsl:attribute name="width">
+                <xsl:text>50%</xsl:text>
+            </xsl:attribute>
+            <description>
+                <p>
+                    <xsl:value-of select="@alt"/>
+                </p>
+            </description>
+        </image>
+    </xsl:template>
+
+    <xsl:template match="caution">
+        <warning>
+            <xsl:apply-templates select="node()|@ids" />
+        </warning>
+    </xsl:template>
+
+    <xsl:template match="tip">
         <note>
             <xsl:apply-templates select="node()|@ids" />
         </note>
