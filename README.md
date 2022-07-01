@@ -2,13 +2,13 @@
 
 ## Converting RST to PreTeXt
 
-Lets just acknowledge that this is a somewhat cumbersom multi-step process, but do keep in mind that it is not meant to be done everyday. Ideally this is done once for each book, so it should not be so bad.
+Lets just acknowledge that this is a somewhat cumbersom multi-step process, but do keep in mind that it is not meant to be done everyday. Ideally this is done once for each book, so it should not be so bad. It is 100% likely that at the end of this process there will still be a fair amount of manual cleanup to do.
 
 ### RST + Runestone to Generic XML
 
 First hack the pavement.py file. Make a copy of the `template_args` dictionary and past it outside the Options bunch.
 
-Simply run `runestone rst2xml` this will put xml files in `build/xml`. It will also create a file called `rs-substitutes.xml` this contains the html for **some** of the components that have not been converted. The remaining pieces of the `rs-substitutes.xml` file
+Simply run `runestone rst2ptx` this will put xml files in `build/xml`. It will also create a file called `rs-substitutes.xml` this contains the html for **many** of the components that have not been converted. The remaining pieces of the `rs-substitutes.xml` file
 can be populated from the database by running the `updateSubs.py` script in the book folder.
 
 ### Generic XML to PreTeXt
@@ -75,9 +75,15 @@ Create a `publication-rs-for-all.xml` file
 
 `pretext build web`
 
+At this point you may encounter failures! Things that I didn't think of to convert may have resulted in bad xml. Mistakes in the underlying rst may generate unexpected and bad PreTeXt. You may need to fix the rst and run the sequence again. You may discover that there is a pattern to what is bad, but it is not an rst error. In that case maybe a script can fix it in all files. If you find yourself doing global search and replace, that would be a good thing to convert to a python script to save others time. If there are XML tags that are not converted to PTX correctly that would be a good time to add a template to the `docutils2ptx.xsl` file.
+
 ### External and Generated
 
 The source tag in the publication file tells PreTeXt where your images are. The paths to the images must be **relative to your main PreTeXt source file**. This may take some work to move some images around and it will need to match the path you have specified in your source. The generated folder is for generated assets, for a typical book being converted from restructuredText this will only mean the traces needed for a CodeLens. Your can run `pretext generate` and it will build any traces that are needed. You don't need to run this step every time, only when you change a CodeLens.
+
+### Make this Collaborative
+
+If you discover something that the above scripts do not handle but you recognize a pattern. Please write a script or update the xsl so that future converters can benefit and make a pull request. Again, Once a book has been satisfactorally converted you should proceed with manual cleanup and never have to do run these scripts for the book again.
 
 TODO:
 
