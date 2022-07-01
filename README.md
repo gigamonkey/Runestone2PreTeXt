@@ -21,16 +21,63 @@ To convert xml output by a sphinx build you have two options
 
 2. run `python xml2ptx.py` which will walk the directories in in the build/xml folder. This will read the xml source from the build/xml folder and write pretext source to the pretext folder.
 
+::
+
+    python ~/Runestone/Runestone2PreTeXt/xml2ptx.py /path/to/bookfolder
+
+### Fix up stuff that has not been fixed.
+
+From the main folder of the book -- pretext should be a subdirectory. Run the following scripts in this order to fix things up. They should each walk the pretext folder and fix various things that the main conversion was not able to deal with.
+
+::
+
+    python ~/Runestone/Runestone2PreTeXt/fixIds.py
+    python ~/Runestone/Runestone2PreTeXt/fix_xrefs.py
+    python ~/Runestone/Runestone2PreTeXt/reformatPtx.py
+
+### Create a PreTeXt project file
+
+Run the command `pretext init` and answer any questions it asks.
+
+.. code-block:: xml
+
+    <project>
+    <targets>
+        <target name="web">
+        <format>html</format>
+        <source>pretext/<yourmainhere>.ptx</source>
+        <publication>pretext/publication-rs-for-all.xml</publication>
+        <output-dir>output/html</output-dir>
+        </target>
+    ...
+
+Create a `publication-rs-for-all.xml` file
+
+.. code-block:: xml
+
+    <!-- Testing for Runestone -->
+    <publication>
+
+        <source>
+            <directories external="Figures" generated="GenFigs" />
+        </source>
+
+        <html>
+            <platform host="web" />
+            <!-- knowled checkpoints interfere with ActiveCode problems -->
+            <knowl exercise-inline="no" example="no" listing="yes" />
+        </html>
+
+        <stringparam key="debug.rs.services.file" value="/Users/bmiller/Runestone/RunestoneComponents/runestone/dist/webpack_static_imports.xml" />
+    </publication>
+
 ### Build the PreTeXt book
 
-`pretext build html -i index.ptx -p publication.xml --param runestone.dev:yes`
+`pretext build web`
 
-Or using Robs dev script
-python ~/src/pretext/pretext/pretext -c all -f html -p publication-rs-for-all.xml -d ../beta thinkcspy.ptx
+### External and Generated
 
-To build for academy use the publication-rs-for-academy.xml file See https://pretextbook.org/doc/guide/html/publication-file-online.html
-
-Its good to check latex as it is pickier than html
+The source tag in the publication file tells PreTeXt where your images are. The paths to the images must be **relative to your main PreTeXt source file**. This may take some work to move some images around and it will need to match the path you have specified in your source. The generated folder is for generated assets, for a typical book being converted from restructuredText this will only mean the traces needed for a CodeLens. Your can run `pretext generate` and it will build any traces that are needed. You don't need to run this step every time, only when you change a CodeLens.
 
 TODO:
 
