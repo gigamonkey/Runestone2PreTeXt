@@ -6,16 +6,14 @@ Lets just acknowledge that this is a somewhat cumbersom multi-step process, but 
 
 ### RST + Runestone to Generic XML
 
-First hack the pavement.py file. Make a copy of the `template_args` dictionary and past it outside the Options bunch.
+First hack the pavement.py file by making a copy of the `template_args` dictionary and pasting it outside the Options bunch.
 
-Simply run `runestone rst2ptx` this will put xml files in `build/xml`. It will also create a file called `rs-substitutes.xml` this contains the html for **many** of the components that have not been converted. The remaining pieces of the `rs-substitutes.xml` file
-can be populated from the database by running the `updateSubs.py` script in the book folder.
+Simply run `runestone rs2ptx` inside the shell. This will put xml files in `build/xml`. It will also create a file called `rs-substitutes.xml`. This contains the html for **many** of the components that have not been converted. The remaining pieces of the `rs-substitutes.xml` file can be populated from the database by running the `updateSubs.py` script in the book folder.
 
 ### Generic XML to PreTeXt
 
-Edit your index.rst file and change the toctree directives to use xml includes. Then convert the toctree.rst files with the script `toctree2xml.py`
-
-To convert xml output by a sphinx build you have two options
+First, create a `pretext` folder inside the book directory.
+Next, to convert xml output by a sphinx build you have two options
 
 1. run `xsltproc /path/to/docutils2ptx.xsl /path/to/build/xml/foo.xml > foo.ptx` for every sub chapter.
 
@@ -37,7 +35,10 @@ From the main folder of the book -- pretext should be a subdirectory. Run the fo
 
 ### Create a PreTeXt project file
 
+Inside the pretext folder create a `main.ptx` file. 
+Copy the toctree directives of `index.rst` file into the `main.ptx` file, and convert them to use xml includes.
 Run the command `pretext init` and answer any questions it asks.
+Open `project.ptx` and under `<source>` tag replace `sources` to `pretext`.
 
 .. code-block:: xml
 
@@ -51,7 +52,7 @@ Run the command `pretext init` and answer any questions it asks.
         </target>
     ...
 
-Create a `publication-rs-for-all.xml` file
+Create a `publication-rs-for-all.xml` file in the `pretext` folder. Add the following code:
 
 .. code-block:: xml
 
@@ -71,9 +72,17 @@ Create a `publication-rs-for-all.xml` file
         <stringparam key="debug.rs.services.file" value="/Users/bmiller/Runestone/RunestoneComponents/runestone/dist/webpack_static_imports.xml" />
     </publication>
 
+### Convert toctree directives
+
+Convert the toctree.rst files with the script `python toctree2xml.py`
+
+::
+
+    python ~/Runestone/Runestone2PreTeXt/toctree2xml.py /path/to/bookfolder
+
 ### Build the PreTeXt book
 
-`pretext build web`
+Run `pretext build web`
 
 At this point you may encounter failures! Things that I didn't think of to convert may have resulted in bad xml. Mistakes in the underlying rst may generate unexpected and bad PreTeXt. You may need to fix the rst and run the sequence again. You may discover that there is a pattern to what is bad, but it is not an rst error. In that case maybe a script can fix it in all files. If you find yourself doing global search and replace, that would be a good thing to convert to a python script to save others time. If there are XML tags that are not converted to PTX correctly that would be a good time to add a template to the `docutils2ptx.xsl` file.
 
