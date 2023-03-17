@@ -8,7 +8,7 @@ from pathlib import Path
 import pdb
 import sys
 
-xsl_filename = "/Users/bmiller/Runestone/Runestone2Pretext/docutils2ptx.xsl"
+xsl_filename = Path(__file__).parent / "docutils2ptx.xsl"
 basedir = sys.argv[1]
 
 
@@ -60,10 +60,12 @@ def transform_one_page(root, xml_filename, fileonly):
         ptfile.write(ET.tostring(newdom, pretty_print=True).decode("utf8"))
 
 
-os.chdir(f"{basedir}")
+xmldir = Path(basedir) / "build"
+if not xmldir.exists():
+    print(f"Directory {xmldir} does not exist")
 
 # Recursively walk the tree
-for root, dirs, files in os.walk("build/xml"):
+for root, dirs, files in os.walk(xmldir):
     for file in files:
         if file.endswith(".xml"):
             transform_one_page(root, Path(os.path.join(root, file)), file)
