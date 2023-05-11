@@ -19,7 +19,8 @@ IMG_EXTS = [
 
 def copy_figs(sourcedir: Path, destdir: Path) -> None:
     """
-    Recursively copies figures in sourcedir to external dir, retaining directory structure.
+    Copies figures from sourcedir to destdir, creating any necessary subdirectories.
+    Figures defined as files with extensions in IMG_EXTS, case insensitive.
     """
     for f in sourcedir.iterdir():
         if f.suffix.lower() in IMG_EXTS:
@@ -32,8 +33,7 @@ def copy_figs(sourcedir: Path, destdir: Path) -> None:
 
 def main(sourcedir: Path, destdir: Path) -> None:
     """
-    Traverses sourcedir looking for images and copies them to destdir.
-    Preserves relative directory structure.
+    Walks through the sourcedir and copies any figures to the destdir, preserving directory structure.
     """
     for root, _, _ in os.walk(sourcedir):
         root = Path(root)
