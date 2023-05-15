@@ -80,6 +80,13 @@ Convert the toctree.rst files with the script `python toctree2xml.py`
 
     python ~/Runestone/Runestone2PreTeXt/toctree2xml.py /path/to/bookfolder
 
+### Copy figures
+Run the script `copy_figs.py` to copy any images (png, jpeg, svg, gif, etc) in the rst source to the pretext folder:
+
+    python ~/Runestone/Runestone2PreTeXt/copy_figs.py /path/to/_source /path/to/pretext/Figures
+
+where `/path/to/pretext/Figures` is the directory specified as `external` in `publication-rs-for-all.xml`.
+
 ### Build the PreTeXt book
 
 Run `pretext build web`
@@ -96,4 +103,4 @@ If you discover something that the above scripts do not handle but you recognize
 
 TODO:
 
--   Need a better way to get images into the build directory for PreTeXt
+- ~~Need a better way to get images into the build directory for PreTeXt~~ hopefully addressed with copy_figs.py
