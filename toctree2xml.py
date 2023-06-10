@@ -70,6 +70,8 @@ def convert_one_toctree(root, path):
             fname = line.replace(".rst", "").strip()
             if fname:
                 ttx.write(f"        <xi:include href='./{fname}.ptx' />\n")
+            if re.match(r"^\s*$", line):
+                break;
 
         ttx.write("    </chapter>\n")
 
