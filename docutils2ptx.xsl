@@ -298,9 +298,6 @@
     </xsl:template>
 
     <xsl:template match="comment">
-        <xsl:comment>
-            <xsl:value-of select="." />
-        </xsl:comment>
     </xsl:template>
 
     <!-- ignore the inline element that contains the content (link title) -->
