@@ -11,8 +11,8 @@ for root, dirs, files in os.walk("pretext"):
         if ".ptx" in file:
             with open(os.path.join(root, file)) as f:
                 text = f.read()
-            text = text.replace('"id1 ', f'{counter}_id1')
-            text = text.replace('"id2 ', f'{counter}_id2')
+            text = text.replace('"id1 ', f'"_{counter}_id1')
+            text = text.replace('"id2 ', f'"_{counter}_id2')
             text = text.replace(" index-0", f"{counter}_index-0")
             text = text.replace(" index-1", f"{counter}_index-1")
             text = re.sub(r'xml:id="([\w+-]+) ([\w+-]+)"', r'xml:id="\1"', text)
