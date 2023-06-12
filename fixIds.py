@@ -1,30 +1,27 @@
 import re
 import os
+from collections import defaultdict
 
-seen = set()
+seen = defaultdict(int)
 
 def rewrite_id(m):
     text = re.sub(r'\s+', "-", m.group(1))
-    text = re.sub(r'^([^A-Za-z_])', r'_\1', text)
+    #text = re.sub(r'^([^\w_])', r'_\1', text)
     text = uniquify(text or "empty")
     return f'xml:id="{text}"'
 
 
 def uniquify(text):
-    orig = text
-    counter = 1
-    while text in seen:
-        text = f"{orig}-{counter}" 
-        counter += 1
-    seen.add(text)
-    return text
+    c = seen[text]
+    seen[text] += 1
+    return text if c == 0 else f"{text}-{c}"
 
 
 for root, dirs, files in os.walk("pretext"):
     for file in files:
         if "toctree" in file:
             continue
-        if ".ptx" in file:
+        if file.endswith(".ptx"):
             with open(os.path.join(root, file)) as f:
                 text = f.read()
             text = re.sub(r'xml:id="(.*?)"', rewrite_id, text)
