@@ -466,5 +466,19 @@
         </hint>
     </xsl:template>
 
+    <!-- kludges to mush CSAwesome into someting that PreTeXt doesn't choke on. -->
+
+    <xsl:template match="TimedNode">
+      <exercises>
+        <xsl:apply-templates select="node()|@*"/>
+      </exercises>
+    </xsl:template>
+
+    <xsl:template match='RevealNode[exercise]'>
+      <exercises>
+        <xsl:apply-templates select="node()|@*" />
+      </exercises>
+    </xsl:template>
+
 
 </xsl:stylesheet>
