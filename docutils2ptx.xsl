@@ -371,9 +371,13 @@
         <xsl:text>[TARGET]</xsl:text>
     </xsl:template>
 
+    <xsl:template match="compound[contains(@classes, 'toctree-wrapper')]">
+      <tocToBeReplaced/>
+    </xsl:template>
+
     <xsl:template match="compound">
         <xsl:message>Ignoring Compound for now</xsl:message>
-        <xsl:text>[COMPOUND]</xsl:text>
+        <xsl:text>[UNKNOWN COMPOUND]</xsl:text>
     </xsl:template>
 
     <xsl:template match="substitution_definition"></xsl:template>
