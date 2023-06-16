@@ -6,7 +6,7 @@ seen = defaultdict(int)
 
 def rewrite_id(m):
     text = re.sub(r'\s+', "-", m.group(1))
-    text = re.sub(r'^([^\w_])', r'_\1', text)
+    text = re.sub(r'^(\d)', r'_\1', text)
     text = uniquify(text or "empty")
     return f'xml:id="{text}"'
 
