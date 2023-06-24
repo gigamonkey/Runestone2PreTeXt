@@ -4,6 +4,10 @@
 # includes. The initial XSLT conversion translates the toctree nodes into a
 # marker tag that we can find and replace with the appropriate XML.
 #
+# Note this script does not replace the toctree2xml.py script which is still
+# used for the toctree.rst files. This script should be run after toctree2xml in
+# order to fix up any remaining toctree elements in the rest of the rst files.
+#
 # %%
 
 from pathlib import Path
@@ -47,7 +51,7 @@ def getTOC(rstfile):
 
 def toc2xml(names):
     return [f"<xi:include href='./{name}.ptx'/>\n" for name in names]
-    
+
 
 def processPTX(ptx, ptxdir, sourcedir):
     lines = []
@@ -88,9 +92,9 @@ def walk(ptxdir, sourcedir):
             if ptx.suffix == '.ptx':
                 processPTX(Path(root) / ptx, ptxdir, sourcedir)
 
-            
+
 if __name__ == '__main__':
-    
+
     ptxdir, sourcedir, *files = [Path(p) for p in sys.argv[1:]]
 
     if not files:
@@ -98,4 +102,3 @@ if __name__ == '__main__':
     else:
         for f in files:
             processPTX(f, ptxdir, sourcedir)
-
