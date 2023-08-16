@@ -25,20 +25,20 @@ Next, to convert xml output by a sphinx build you have two options
 
 ### Fix up stuff that has not been fixed.
 
-From the main folder of the book -- pretext should be a subdirectory. Run the following scripts in this order to fix things up. They should each walk the pretext folder and fix various things that the main conversion was not able to deal with.
+From the main folder of the book (pretext should be a subdirectory) run the following scripts in this order to fix things up. They should each walk the pretext folder and fix various things that the main conversion was not able to deal with.
 
 ::
 
     python ~/Runestone/Runestone2PreTeXt/fixIds.py
     python ~/Runestone/Runestone2PreTeXt/fix_xrefs.py
     python ~/Runestone/Runestone2PreTeXt/reformatPtx.py
+    python ~/Runestone/Runestone2PreTeXt/index2main.py
 
 ### Create a PreTeXt project file
 
-Inside the pretext folder create a `main.ptx` file. 
-Copy the toctree directives of `index.rst` file into the `main.ptx` file, and convert them to use xml includes.
-Run the command `pretext init` and answer any questions it asks.
-Open `project.ptx` and under `<source>` tag replace `sources` to `pretext`.
+Now we will create the pretext project.
+Run the command `pretext init` (still from the main folder of the book). This will create some new files, including `project.ptx`.
+Open `project.ptx` and under `<source>` tag replace `source` with `pretext`
 
 .. code-block:: xml
 
@@ -46,12 +46,13 @@ Open `project.ptx` and under `<source>` tag replace `sources` to `pretext`.
     <targets>
         <target name="web">
         <format>html</format>
-        <source>pretext/<yourmainhere>.ptx</source>
+        <source>pretext/main.ptx</source>
         <publication>pretext/publication-rs-for-all.xml</publication>
         <output-dir>output/html</output-dir>
         </target>
     ...
 
+Note we also modified the `<publication>` element.  
 Create a `publication-rs-for-all.xml` file in the `pretext` folder. Add the following code:
 
 .. code-block:: xml
