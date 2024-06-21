@@ -46,9 +46,9 @@
 import re
 
 
-def convert_one_toctree(root, path):
+def convert_one_toctree(root, sources, path):
     tt = open(path).readlines()
-    newroot = root.replace("_sources", "pretext")
+    newroot = root.replace(sources, "pretext")
     with open(os.path.join(newroot, "toctree.ptx"), "w") as ttx:
         ttx.write(
             """\
@@ -81,13 +81,17 @@ import os
 from pathlib import Path
 import sys
 
-# sys.argv[1] should be path to the top level of the book
-os.chdir(sys.argv[1])
+# top is the top level of the book
+# sources is the directory where the .rst sources live
+
+top, sources = sys.argv[1:]
+
+os.chdir(top)
 
 # Recursively walk the tree
-for root, dirs, files in os.walk("."):
+for root, dirs, files in os.walk(sources):
     for file in files:
         if file == "toctree.rst":
-            convert_one_toctree(root, Path(os.path.join(root, file)))
+            convert_one_toctree(root, sources, Path(os.path.join(root, file)))
 
 # %%
