@@ -66,9 +66,11 @@
             <xsl:attribute name="align">
                 <xsl:value-of select="@align" />
             </xsl:attribute>
-            <xsl:attribute name="xml:id">
-                <xsl:value-of select="@ids" />
-            </xsl:attribute>
+            <xsl:if test="@ids != ''">
+              <xsl:attribute name="xml:id">
+                <xsl:value-of select="@ids"/>
+              </xsl:attribute>
+            </xsl:if>
             <xsl:copy-of select="caption" />
             <!-- <image>
                 <xsl:attribute name="source">
