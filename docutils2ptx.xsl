@@ -148,9 +148,10 @@
             </xsl:attribute>
             <xsl:if test="@width">
                 <xsl:attribute name="width">
-                    <xsl:value-of select="concat(@width, '%')" />
+<!--                    <xsl:value-of select="concat(@width, '%')" /> -->
+                        <xsl:value-of select="@width" />
                 </xsl:attribute>
-            </xsl:if>
+            </xsl:if> 
             <xsl:if test="not(@width)">
                 <xsl:attribute name="width">
                     <xsl:text>50%</xsl:text>
